@@ -1,0 +1,148 @@
+---
+title: "coffee_analysis"
+output: html_document 
+date: "2023-02-10"
+---
+
+## VERI CAGIRMA
+
+```{r}
+library(readxl)
+coffee <- read_excel("C:/Users/Acer/Desktop/Coffee.xlsx")
+View(coffee)
+
+```
+
+## VERI HAKKINDA OZET
+
+```{r}
+summary(coffee)
+```
+
+-   Veri 97 satır 4 sütundan oluşmaktadır.
+
+-   Minimum 1, maksimum 8 ortalama yaklaşık 3 fincan kahve tüketilmiştir
+
+## ILGILI KUTUPHANE
+
+```{r}
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+```
+
+## SORULAR
+
+#### Toplam kadın erkek sayısı
+
+```{r}
+## Kadın ve erkek sayısı
+
+coffee %>% 
+  count(Gender)
+
+```
+
+-   Veri'de Kadın sayısı 26, Erkek sayısı 71'dir.
+
+#### Kadınların günlük tükettiği kahve miktarları
+
+```{r}
+coffee %>% 
+  select(Gender, AgeRange, CoffeeCupsPerDay) %>%
+  filter(Gender=="Female") %>%
+  summarize(Female_CoffeCup_avg= mean(CoffeeCupsPerDay),
+            Female_CoffeCup_min= min(CoffeeCupsPerDay),
+            Female_CoffeCup_max=max(CoffeeCupsPerDay))
+
+```
+
+Kadınlar;
+
+-   Ortalama yaklaşık 2, minimum 1, maksimum 7 fincan kahve tüketmektedir.
+
+#### Kadınların tükettiği kahve türleri
+
+```{r}
+coffee %>% 
+  select(Gender, AgeRange, CoffeeCupsPerDay, CoffeeType) %>%
+  filter(Gender=="Female") %>%
+  count(CoffeeType)
+```
+
+Kadınların verilerine göre;
+
+-   Nescafe'yi tercih eden 14 kişi ile en çok tercih edilirken
+-   Espresso (Short Black) tercih eden 1 kişi ile en az tercih edildiği
+
+görülmüştür.
+
+#### Kadınların yaş aralıklarına göre Nescafe tercih edenler
+
+```{r}
+coffee %>% 
+  select(Gender, AgeRange, CoffeeCupsPerDay, CoffeeType) %>%
+  filter(Gender=="Female", CoffeeType=="Nescafe") %>%
+  count(AgeRange) 
+```
+
+Kadınlara göre Nescafe'yi tercih eden;
+
+-   18-29 yaş aralığında 11
+-   30-39 yaş aralığında 3 kişidir.
+
+#### Erkeklerin günlük tükettiği kahve miktarları
+
+```{r}
+coffee %>% 
+  select(Gender, AgeRange, CoffeeCupsPerDay) %>%
+  filter(Gender=="Male") %>%
+  summarize(Male_CoffeCup_avg= mean(CoffeeCupsPerDay),
+            Male_CoffeCup_min= min(CoffeeCupsPerDay),
+            Male_CoffeCup_max=max(CoffeeCupsPerDay))
+```
+
+Erkekler;
+
+-   Ortalama yaklaşık 3, minimum 1, maksimum 8 fincan kahve tüketmektedir.
+
+#### Erkeklerin tükettiği kahve türleri
+
+```{r}
+coffee %>% 
+  select(Gender, AgeRange, CoffeeCupsPerDay, CoffeeType) %>%
+  filter(Gender=="Male") %>%
+  count(CoffeeType)
+```
+
+Erkeklerin verilerine göre;
+
+-   American Coffee'yi tercih eden 18 kişi ile en çok tercih edilirken
+-   Latte'yi tercih eden 3 kişi ile en az tercih edildiği
+
+görülmüştür.
+
+-   En çok tercih edilenlerin arasında Nescafe 16 ve Turkish Coffee 17 ile yine en çok tercih edilenlerin arasındadır.
+
+#### Erkeklerde yaş aralıklarına göre American Coffee tercih edenler
+
+```{r}
+coffee %>% 
+  select(Gender, AgeRange, CoffeeCupsPerDay, CoffeeType) %>%
+  filter(Gender=="Male", CoffeeType=="American Coffee") %>%
+  count(AgeRange) 
+```
+
+Erkeklere göre American Coffee'yi tercih eden;
+
+-   18-29 yaş aralığında 12
+-   30-39 yaş aralığında 5
+-   40-49 yaş aralığında 1 kişi vardır.
+
+## GRAFIK
+
+```{r}
+ggplot(coffee, aes(x = Gender , fill = CoffeeType)) +
+  geom_bar(position = "stack") +
+  theme(axis.text.x = element_text(angle = 8))
+```
